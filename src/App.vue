@@ -1,6 +1,11 @@
 <script>
-// import CharacterFacts from './components/CharacterFacts.vue'
+import DrinkStatistics from './components/DrinkStatistics.vue'
+import CharacterCard from './components/CharacterCard.vue'
 export default {
+  components: {
+    DrinkStatistics,
+    CharacterCard,
+  },
   data: () => ({
     newCharacter: {
       name: '',
@@ -9,11 +14,11 @@ export default {
     characterList: [
       {
         name: 'The Dude',
-        drink: ['cosmo', 'white russian'],
+        drink: ['Cosmo', 'White Russian'],
       },
       {
         name: 'Maude',
-        drink: ['cosmo', 'wine'],
+        drink: ['Cosmo', 'wine'],
       },
       {
         name: 'Walter',
@@ -24,7 +29,7 @@ export default {
         drink: ['root beer', 'Mt. Dew'],
       },
     ],
-    favoriteCharacter: [],
+    favoriteList: [],
     Movies: [
       {
         title: 'Big Lebowski',
@@ -42,49 +47,24 @@ export default {
       },
     ],
   }),
-  computed: {
-    drinkStaticstics() {
-      const drink = ['cosmo', 'soda', 'white russian', 'root beer', 'wine', 'Mt. Dew']
-      const staticstics = {
-        cosmo: 0,
-        soda: 0,
-        'white russian': 0,
-        'root beer': 0,
-        wine: 0,
-        'Mt. Dew': 0,
-      }
-      this.characterList.forEach((character) => {
-        drink.forEach((drink) => {
-          if (character.drink.indexOf(drink) > -1) {
-            staticstics[drink] += 1
-          }
-        })
-      })
-
-      return staticstics
-    },
-  },
   methods: {
     addNewCharacter() {
       this.characterList.push(this.newCharacter)
       this.newCharacter = { name: '', drink: '' }
     },
-    makeFavorite(character) {
-      this.favoriteCharacter.push(character)
+    addFavoriteCharacter(payload) {
+      this.favoriteList.push(payload)
     },
   },
 }
 </script>
 <template>
+  <DrinkStatistics :characters="characterList" />
   <h2>The Big Lebowski</h2>
   <h2>Characters</h2>
-  <ul>
-    <li v-for="(stat, type) in drinkStaticstics">{{ type }}: {{ stat }}</li>
-  </ul>
   <ul v-if="characterList.length > 0">
-    <li v-for="character in characterList">
-      {{ character.name }}
-      <button v-on:click="makeFavorite(character)">Favorite</button>
+    <li v-for="(character, index) in characterList" :key="`even-character-${index}`">
+      <CharacterCard :character="character" @favorite="addFavoriteCharacter" />
     </li>
   </ul>
   <p v-else>There are no characters</p>
@@ -100,8 +80,8 @@ export default {
     @keyup.enter="addNewCharacter"
   />
 
-  <ul v-if="favoriteCharacter.length > 0">
-    <li v-for="actor in favoriteCharacter">
+  <ul v-if="favoriteList.length > 0">
+    <li v-for="actor in favoriteList">
       {{ actor.name }}
     </li>
   </ul>
